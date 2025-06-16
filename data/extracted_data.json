@@ -1,0 +1,24 @@
+[
+  {
+    "date": "2023-11-20",
+    "Total Cholesterol": 200.0,
+    "HDL": 42.0,
+    "LDL": 128.0,
+    "Triglycerides": 150.0,
+    "Creatinine": 1.2,
+    "Vitamin D": 20.0,
+    "Vitamin B12": 350.0,
+    "HbA1c": 5.6
+  },
+  {
+    "date": "2023-12-01",
+    "Total Cholesterol": 136.0,
+    "HDL": 36.0,
+    "LDL": 65.0,
+    "Triglycerides": 177.0,
+    "Creatinine": 1.18,
+    "Vitamin D": 18.73,
+    "Vitamin B12": 259.0,
+    "HbA1c": 5.8
+  }
+]

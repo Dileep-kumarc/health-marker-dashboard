@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biomarker Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <style>
+        :root {
+            --sidebar-width: 300px;
+            --header-height: 60px;
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            height: var(--header-height);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .header p {
+            margin: 0 0 0 1rem;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: white;
+            padding: 1.5rem;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .bookmarks {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .bookmarks h4 {
+            color: #444;
+            margin-bottom: 1rem;
+        }
+        
+        .bookmark-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .bookmark-list li a {
+            display: block;
+            padding: 0.5rem;
+            color: #666;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .bookmark-list li a:hover {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 2rem;
+        }
+        
+        .biomarker-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .biomarker-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .biomarker-card h5 {
+            color: #444;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .value-display {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 0.5rem;
+        }
+        
+        .value-display .value {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .value-display .unit {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .value-normal { color: var(--success-color); }
+        .value-high { color: var(--danger-color); }
+        .value-low { color: var(--warning-color); }
+        
+        .reference-ranges {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .reference-range-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .controls-wrapper {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .btn-group .btn {
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+        
+        .btn-group .btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .daterange-picker {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 100%;
+                --header-height: 80px;
+            }
+            
+            .sidebar {
+                position: relative;
+                width: 100%;
+                max-height: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                left: 0;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+            
+            .controls-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+            }
+            
+            .daterange-picker {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="bookmarks">
+            <h4 class="mb-4">Biomarker Summary</h4>
+            <div id="biomarkerCards"></div>
+        </div>
+    </div>
+    
+    <div class="header">
+        <h2>Biomarker Dashboard</h2>
+        <p>Tracking your health metrics over time</p>
+    </div>
+    
+    <div class="main-content">
+        <div class="controls-wrapper">
+            <div class="btn-group">
+                <button class="btn btn-outline-primary active" data-view="all">All Biomarkers</button>
+                <button class="btn btn-outline-primary" data-view="individual">Individual Charts</button>
+            </div>
+            <input type="text" class="daterange-picker" id="dateRange">
+        </div>
+        
+        <div id="allChartsView">
+            <div class="chart-container" style="height: 500px;">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+        
+        <div id="individualChartsView" style="display: none;">
+            <div class="row g-4" id="individualCharts"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{{ url_for('static', filename='chart.js') }}"></script>
+</body>
+</html>
